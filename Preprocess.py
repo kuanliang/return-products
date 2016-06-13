@@ -1,6 +1,7 @@
 import pandas as pd
+from pyspark import HiveContext
 
-def analyze_column(sparkContext, X):
+def analyze_column(sc, X):
     """analyze column by
 
 
