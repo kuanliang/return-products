@@ -1,6 +1,9 @@
 from utility import isfloat
+import numpy as np
+import pandas as pd
+from sklearn.metrics import classification_report
 
-def predict_test(matrix, modelsDict, colInfo, **kwargv):
+def predict_test(matrix, model, colInfo, samplingRatio, **kwargv):
     """use the selected model to predict leftover records,
 
     Notes:
@@ -25,7 +28,11 @@ def predict_test(matrix, modelsDict, colInfo, **kwargv):
 
     """
     # use the all model to do the prediction
-    model = modelsDict['all']['model']
+    # model = modelsDict['all']['model']
+
+
+    intList = range(1, int(samplingRatio * 100) + 1)
+    intRevList = list(set(range(1,101)) - set(intList))
 
     colFinal = colInfo['preprocess']['final']
 
@@ -40,7 +47,7 @@ def predict_test(matrix, modelsDict, colInfo, **kwargv):
         # use the model to predict original sampling recrod, for verification
 
 
-        matrixSample = matrix[matrix['randInt'] == 1]
+        matrixSample = matrix[matrix['randInt'].isin(intList)]
         truePredictRdd = (matrixSample.map(lambda x: (x.y, x.items))
                                      .map(lambda (a, b): (a, {col:b[col] if col in b.keys() else np.NAN for col in colFinal}))
                                      .map(lambda (a, b): (a, {col:float(b[col]) if isfloat(b[col]) else np.NAN for col in colFinal}))
@@ -48,7 +55,7 @@ def predict_test(matrix, modelsDict, colInfo, **kwargv):
                                      .map(lambda (a, b): (a, model.predict(b), model.predict_proba(b))))
 
     elif kwargv['target'] == 'leftover':
-        matrixSample = matrix[matrix['randInt'] != 1]
+        matrixSample = matrix[matrix['randInt'].isin(intRevList)]
         truePredictRdd = (matrixSample.map(lambda x: (x.y, x.items))
                                      .map(lambda (a, b): (a, {col:b[col] if col in b.keys() else np.NAN for col in colFinal}))
                                      .map(lambda (a, b): (a, {col:float(b[col]) if isfloat(b[col]) else np.NAN for col in colFinal}))

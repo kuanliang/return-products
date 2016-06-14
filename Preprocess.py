@@ -1,5 +1,6 @@
 import pandas as pd
 from pyspark import HiveContext
+from sklearn.base import BaseEstimator, TransformerMixin
 
 def analyze_column(sc, X):
     """analyze column by
@@ -23,7 +24,7 @@ def analyze_column(sc, X):
         }
 
     """
-    hc = HiveContext(sparkContext)
+    hc = HiveContext(sc)
     colInfo = {}
     preprocess = {}
 

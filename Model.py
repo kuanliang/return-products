@@ -1,14 +1,32 @@
+
+from Preprocess import InitialProcessor
+import pandas as pd
+import numpy as np
+# SKLearn Libraries
+from sklearn import linear_model
+from sklearn import cross_validation
+from sklearn.pipeline import FeatureUnion
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import Imputer, RobustScaler
+# RobustScaler
+from sklearn.metrics import classification_report
+from sklearn import grid_search
+
+# outside package
+from Transform import get_y
+
+
 def learn_model(X, y, colInfo):
     """
 
     """
-    print 'modeling start...'
+    print 'start MODELING...'
     #print 'X: {}'.format(type(X))
     #preprocessing = FeatureUnion([("initial", InitialProcessor())])
-    IP = InitialProcessor(colInfo=colInfo.value)
+    IP = InitialProcessor(colInfo=colInfo)
 
     # print 'X value: {}'.format(type(X))
-    X = pd.DataFrame(X.value, columns=colInfo.value['preprocess']['all'])
+    X = pd.DataFrame(X, columns=colInfo['preprocess']['all'])
     X = IP.transform(X)
     pipe = Pipeline([
             #('union', InitialProcessor(colInfo=colInfo)),
@@ -33,4 +51,41 @@ def learn_model(X, y, colInfo):
     # self.predicion_report_test = prediction_report_test
     # self.prediction_report_train = prediction_report_train
     return gs_cv, prediction_report_test, prediction_report_train
+
+
+def sampling_modeling(matrix, colInfo, **sampling):
+
+
+    if sampling['samplingRatio'] not in np.arange(0.1, 1.1, 0.1) :
+        print 'please specify sampling ratio within list: {}'.format(np.linspace(0.01, 1, 100))
+        sys.exit()
+    # the X matrix
+    else:
+        samplingRatio = sampling['samplingRatio']
+
+        # according to the specified sampling ratio, generate a list of random numbers that will be
+        # used to filter training data later
+        randIntList = range(1, int(samplingRatio * 100) + 1)
+
+        matrixReturn = matrix[matrix['y'] == 1]
+        matrixPass = matrix[matrix['y'] == 0]
+        # matrixPassSample = matrixPass.sample(False, 0.01, 42)
+        # rather than use dataframe sampling funciton, use the random integer gererated in matrix dataframe
+        matrixPassSample = matrixPass[matrixPass['randInt'].isin(randIntList)]
+        # unionAll dataframes
+        matrixSample = matrixReturn.unionAll(matrixPassSample)
+        matrixGet = matrixSample
+        y = get_y(matrixGet)
+
+        pdf = pd.DataFrame(matrixSample.map(lambda x: x.items).collect())
+
+        model, report_test, report_train = learn_model(X=pdf, y=y, colInfo=colInfo)
+
+
+    return model, report_test, report_train
+
+
+
+
+
 
