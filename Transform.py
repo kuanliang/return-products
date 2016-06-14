@@ -3,6 +3,8 @@ from sklearn.base import BaseEstimator, TransformerMixin
 import numpy as np
 import pandas as pd
 
+from DataIO import load_y, load_specific_X
+
 
 def create_X(logDf, fatpDf):
     """Create X matrix for predictive modeling
@@ -32,7 +34,7 @@ def create_X(logDf, fatpDf):
     return items
 
 
-def create_matrix(X, y, top = 4):
+def combine_matrix(X, y, top = 4):
     """Create the data matrix for predictive modeling
 
     Notes: The default top n number is 5
@@ -124,6 +126,23 @@ def get_y(matrix, **target):
         targety = np.array(matrix.map(lambda x: x.y).collect())
 
     return targety
+
+
+
+def create_matrix(date, hiveContext, sparkContext):
+
+    # load logDf, fatpDf
+    logDf, fatpDf = load_specific_X(date, hiveContext)
+    # laod y
+    rpcDf = load_y(sc=sparkContext)
+    # combine X
+    X = combine_matrix(logDf, fatpDf)
+    # create matrix
+    matrix = create_matrix(X, rpcDf)
+
+
+
+
 
 
 

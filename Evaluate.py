@@ -2,6 +2,8 @@ from utility import isfloat
 import numpy as np
 import pandas as pd
 from sklearn.metrics import classification_report
+from sklearn.metrics import precision_recall_curve
+
 
 def predict_test(matrix, model, colInfo, samplingRatio, **kwargv):
     """use the selected model to predict leftover records,
@@ -43,6 +45,9 @@ def predict_test(matrix, model, colInfo, samplingRatio, **kwargv):
                                 .map(lambda (a, b): (a, {col:float(b[col]) if isfloat(b[col]) else np.NAN for col in colFinal}))
                                 .map(lambda (a, b): (a, [b[col] for col in colInfo['preprocess']['final']]))
                                 .map(lambda (a, b): (a, model.predict(b), model.predict_proba(b))))
+
+
+
     elif kwargv['target'] == 'test':
         # use the model to predict original sampling recrod, for verification
 
@@ -69,6 +74,6 @@ def predict_test(matrix, model, colInfo, samplingRatio, **kwargv):
     predict_proba = truePredictRdd.map(lambda (a, b, c): c[0]).collect()
 
     prediction_report_all = classification_report(true, predict)
-    # precision, recall, thresholds = precision_recall_curve(true, predict_proba)
+    precision, recall, thresholds = precision_recall_curve(true, predict_proba)
 
-    return prediction_report_all
+    return prediction_report_all, precision, recall, thresholds
