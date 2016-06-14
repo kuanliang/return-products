@@ -5,7 +5,7 @@ from sklearn.metrics import classification_report
 from sklearn.metrics import precision_recall_curve
 
 
-def predict_test(matrix, model, colInfo, samplingRatio, **kwargv):
+def predict_test(matrix, model, colInfo, samplingRatio=0.01, **kwargv):
     """use the selected model to predict leftover records,
 
     Notes:
@@ -48,11 +48,11 @@ def predict_test(matrix, model, colInfo, samplingRatio, **kwargv):
 
 
 
-    elif kwargv['target'] == 'test':
+    elif kwargv['target'] == 'validate':
         # use the model to predict original sampling recrod, for verification
-
-
-        matrixSample = matrix[matrix['randInt'].isin(intList)]
+        matrixReturn = matrix[matrix['randInt'] == 1]
+        matrixPass = matrix[matrix['randInt'].isin(intList)]
+        matrixSample = matrixReturn.unionAll(matrixPass)
         truePredictRdd = (matrixSample.map(lambda x: (x.y, x.items))
                                      .map(lambda (a, b): (a, {col:b[col] if col in b.keys() else np.NAN for col in colFinal}))
                                      .map(lambda (a, b): (a, {col:float(b[col]) if isfloat(b[col]) else np.NAN for col in colFinal}))
@@ -77,3 +77,5 @@ def predict_test(matrix, model, colInfo, samplingRatio, **kwargv):
     precision, recall, thresholds = precision_recall_curve(true, predict_proba)
 
     return prediction_report_all, precision, recall, thresholds
+
+
