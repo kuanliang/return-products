@@ -29,7 +29,7 @@ def create_X(logDf, fatpDf):
 
     items = logFatpDfDist.select('serial_number', 'items')
     meta = logFatpDfDist.select('serial_number','version', 'line', 'machine', 'slot', 'hour')
-    count = logFatpDfDist.count()
+    #count = logFatpDfDist.count()
 
     return items
 

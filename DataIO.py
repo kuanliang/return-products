@@ -42,8 +42,8 @@ def load_specific_X(startDate, hiveContext, model='N71', station='FCT'):
 
 def load_y(sc):
     sqlContext = SQLContext(sc)
-    rpcDf = sqlContext.read.format('jdbc').options(url='jdbc:sqlserver://10.195.228.155;datebase=josh;user=sa;\
-    password=1qaz2wsx3edc4rfv%TGB', dbtable='[josh].[dbo].[rpc_day_andy]').load()
+    rpcDf = sqlContext.read.format('jdbc').options(url='jdbc:sqlserver://10.206.49.41;datebase=rpc;user=sa;\
+    password=1qaz2wsx3edc4rfv%TGB', dbtable='[rpc].[dbo].[rpc_day_andy]').load()
             # rpcPdf = rpcDf.toPandas()
     return rpcDf
 
