@@ -98,7 +98,7 @@ def learn_SVM(X, y, colInfo):
 def sampling_modeling(matrix, colInfo, classifier='SVM', parallel=False, **sampling):
 
 
-    if sampling['samplingRatio'] not in np.arange(0.01, 1.01, 0.01) :
+    if sampling['samplingRatio'] not in [round(x,2) for x in np.arange(0.01, 1.01, 0.01)]:
         print 'please specify sampling ratio within list: {}'.format(np.linspace(0.01, 1, 100))
         sys.exit()
     # the X matrix
