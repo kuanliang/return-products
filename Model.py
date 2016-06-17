@@ -96,7 +96,7 @@ def learn_SVM(X, y, colInfo):
 def sampling_modeling(matrix, colInfo, parallel=False, **sampling):
 
 
-    if sampling['samplingRatio'] not in np.arange(0.1, 1.1, 0.1) :
+    if sampling['samplingRatio'] not in np.arange(0.01, 1.01, 0.01) :
         print 'please specify sampling ratio within list: {}'.format(np.linspace(0.01, 1, 100))
         sys.exit()
     # the X matrix
@@ -123,7 +123,9 @@ def sampling_modeling(matrix, colInfo, parallel=False, **sampling):
             model, report_test, report_train = learn_logistic(X=pdf, y=y, colInfo=colInfo)
         else:
             # sparkML
-            model, report_test, report_train = pa
+            model, report_test, report_train = parallel_learn_logistic(matrixGet, colInfo=colInfo)
+
+
 
 
 
