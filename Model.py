@@ -95,7 +95,7 @@ def learn_SVM(X, y, colInfo):
 
 
 
-def sampling_modeling(matrix, colInfo, parallel=False, **sampling):
+def sampling_modeling(matrix, colInfo, classifier='SVM', parallel=False, **sampling):
 
 
     if sampling['samplingRatio'] not in np.arange(0.01, 1.01, 0.01) :
@@ -122,7 +122,11 @@ def sampling_modeling(matrix, colInfo, parallel=False, **sampling):
             # scikit-learn
             y = get_y(matrixGet)
             pdf = pd.DataFrame(matrixSample.map(lambda x: x.items).collect())
-            model, report_test, report_train = learn_logistic(X=pdf, y=y, colInfo=colInfo)
+
+            if classifier == 'logistic':
+                model, report_test, report_train = learn_logistic(X=pdf, y=y, colInfo=colInfo)
+            elif classifier == 'SVM':
+                model, report_test, report_train = learn_SVM(X=pdf, y=y, colInfo=colInfo)
         else:
             # sparkML
             model, report_test, report_train = parallel_learn_logistic(matrixGet, colInfo=colInfo)
