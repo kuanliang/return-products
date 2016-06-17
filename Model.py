@@ -74,7 +74,7 @@ def learn_SVM(X, y, colInfo):
             ('scaler', RobustScaler()),
             #('clf', linear_model.SGDClassifier(loss = 'log', penalty='l1', class_weight='balanced', n_iter=1))
             # ('pca', pca)
-            ('clf', SVC(kernel='rbf', class_weight='balanced'))
+            ('clf', SVC(kernel='rbf', class_weight='balanced', probability=True))
         ])
 
     param_grid = {
