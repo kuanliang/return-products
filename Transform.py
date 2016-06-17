@@ -136,9 +136,11 @@ def create_matrix(date, hiveContext, sparkContext):
     # laod y
     rpcDf = load_y(sc=sparkContext)
     # combine X
-    X = combine_matrix(logDf, fatpDf)
+    X = create_X(logDf, fatpDf)
     # create matrix
-    matrix = create_matrix(X, rpcDf)
+    matrix = combine_matrix(X, rpcDf)
+
+    return matrix
 
 
 

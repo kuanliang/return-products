@@ -15,6 +15,8 @@ from sklearn import grid_search
 # outside package
 from Transform import get_y
 
+import sys
+
 
 def learn_logistic(X, y, colInfo):
     """
@@ -116,7 +118,7 @@ def sampling_modeling(matrix, colInfo, parallel=False, **sampling):
         matrixSample = matrixReturn.unionAll(matrixPassSample)
         matrixGet = matrixSample
 
-        if parallel=False:
+        if parallel==False:
             # scikit-learn
             y = get_y(matrixGet)
             pdf = pd.DataFrame(matrixSample.map(lambda x: x.items).collect())
@@ -124,9 +126,6 @@ def sampling_modeling(matrix, colInfo, parallel=False, **sampling):
         else:
             # sparkML
             model, report_test, report_train = parallel_learn_logistic(matrixGet, colInfo=colInfo)
-
-
-
 
 
 
