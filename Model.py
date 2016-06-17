@@ -78,9 +78,9 @@ def learn_SVM(X, y, colInfo):
         ])
 
     param_grid = {
-        'C': (1, 1e2, 1e3, 1e4, 1e5),
-        'gamma': (1, 1e-1, 1e-2, 1e-3, 1e-4),
-        'tol': (1e-2, 1e-3, 1e-4, 1e-5)
+        'clf__C': (1, 1e2, 1e3, 1e4, 1e5),
+        'clf__gamma': (1, 1e-1, 1e-2, 1e-3, 1e-4),
+        'clf__tol': (1e-2, 1e-3, 1e-4, 1e-5)
     }
     X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size = 0.3, random_state=0)
     gs_cv = grid_search.GridSearchCV(pipe, param_grid, scoring='precision')
