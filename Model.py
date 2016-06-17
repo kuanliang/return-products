@@ -67,20 +67,20 @@ def learn_SVM(X, y, colInfo):
     # print 'X value: {}'.format(type(X))
     X = pd.DataFrame(X, columns=colInfo['preprocess']['all'])
     X = IP.transform(X)
-    pca = decomposition.PCA()
+    # pca = decomposition.PCA()
     pipe = Pipeline([
             #('union', InitialProcessor(colInfo=colInfo)),
             ('impute', Imputer(missing_values = 'NaN', strategy = 'median', axis = 1)),
             ('scaler', RobustScaler()),
             #('clf', linear_model.SGDClassifier(loss = 'log', penalty='l1', class_weight='balanced', n_iter=1))
-            ('pca', pca)
+            # ('pca', pca)
             ('clf', SVC(kernel='rbf', class_weight='balanced'))
         ])
 
     param_grid = {
-        '': ('1e3', '5e3'),
+        'C': (1, 1e2, 1e3, 1e4, 1e5),
         'gamma': (1, 1e-1, 1e-2, 1e-3, 1e-4),
-        'clf__C': (10, 5, 1, 0.1, 0.01, 0.001, 0.0001)
+        'tol': (1e-2, 1e-3, 1e-4, 1e-5)
     }
     X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size = 0.3, random_state=0)
     gs_cv = grid_search.GridSearchCV(pipe, param_grid, scoring='precision')
