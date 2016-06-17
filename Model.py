@@ -1,4 +1,3 @@
-
 from Preprocess import InitialProcessor
 import pandas as pd
 import numpy as np
@@ -17,7 +16,7 @@ from sklearn import grid_search
 from Transform import get_y
 
 
-def learn_logistic_model(X, y, colInfo):
+def learn_logistic(X, y, colInfo):
     """
 
     """
@@ -54,7 +53,7 @@ def learn_logistic_model(X, y, colInfo):
     return gs_cv, prediction_report_test, prediction_report_train
 
 
-def learn_SVM_model(X, y, colInfo):
+def learn_SVM(X, y, colInfo):
     """
 
     """
@@ -66,19 +65,19 @@ def learn_SVM_model(X, y, colInfo):
     # print 'X value: {}'.format(type(X))
     X = pd.DataFrame(X, columns=colInfo['preprocess']['all'])
     X = IP.transform(X)
-    pca =
+    pca = decomposition.PCA()
     pipe = Pipeline([
             #('union', InitialProcessor(colInfo=colInfo)),
             ('impute', Imputer(missing_values = 'NaN', strategy = 'median', axis = 1)),
             ('scaler', RobustScaler()),
             #('clf', linear_model.SGDClassifier(loss = 'log', penalty='l1', class_weight='balanced', n_iter=1))
             ('pca', pca)
-            ('clf', linear_model.LogisticRegression(class_weight='balanced'))
+            ('clf', SVC(kernel='rbf', class_weight='balanced'))
         ])
 
     param_grid = {
-        'clf__penalty': ('l1', 'l2'),
-        'clf__tol': (1, 1e-1, 1e-2, 1e-3, 1e-4),
+        '': ('1e3', '5e3'),
+        'gamma': (1, 1e-1, 1e-2, 1e-3, 1e-4),
         'clf__C': (10, 5, 1, 0.1, 0.01, 0.001, 0.0001)
     }
     X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size = 0.3, random_state=0)
@@ -94,7 +93,7 @@ def learn_SVM_model(X, y, colInfo):
 
 
 
-def sampling_modeling(matrix, colInfo, **sampling):
+def sampling_modeling(matrix, colInfo, parallel=False, **sampling):
 
 
     if sampling['samplingRatio'] not in np.arange(0.1, 1.1, 0.1) :
@@ -116,11 +115,17 @@ def sampling_modeling(matrix, colInfo, **sampling):
         # unionAll dataframes
         matrixSample = matrixReturn.unionAll(matrixPassSample)
         matrixGet = matrixSample
-        y = get_y(matrixGet)
 
-        pdf = pd.DataFrame(matrixSample.map(lambda x: x.items).collect())
+        if parallel=False:
+            # scikit-learn
+            y = get_y(matrixGet)
+            pdf = pd.DataFrame(matrixSample.map(lambda x: x.items).collect())
+            model, report_test, report_train = learn_logistic(X=pdf, y=y, colInfo=colInfo)
+        else:
+            # sparkML
+            model, report_test, report_train = pa
 
-        model, report_test, report_train = learn_model(X=pdf, y=y, colInfo=colInfo)
+
 
 
     return model, report_test, report_train

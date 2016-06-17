@@ -50,7 +50,7 @@ def predict_test(matrix, model, colInfo, samplingRatio=0.01, **kwargv):
 
     elif kwargv['target'] == 'validate':
         # use the model to predict original sampling recrod, for verification
-        matrixReturn = matrix[matrix['randInt'] == 1]
+        matrixReturn = matrix[matrix['y'] == 1]
         matrixPass = matrix[matrix['randInt'].isin(intList)]
         matrixSample = matrixReturn.unionAll(matrixPass)
         truePredictRdd = (matrixSample.map(lambda x: (x.y, x.items))
@@ -71,7 +71,7 @@ def predict_test(matrix, model, colInfo, samplingRatio=0.01, **kwargv):
 
     true = truePredictRdd.map(lambda (a, b, c): a).collect()
     predict = truePredictRdd.map(lambda (a, b, c): b[0]).collect()
-    predict_proba = truePredictRdd.map(lambda (a, b, c): c[0]).collect()
+    predict_proba = truePredictRdd.map(lambda (a, b, c): c[0][1]).collect()
 
     prediction_report_all = classification_report(true, predict)
     precision, recall, thresholds = precision_recall_curve(true, predict_proba)
