@@ -19,7 +19,7 @@ def create_X(logDf, fatpDf):
 
     """
     # logging.info('Creating the matrix X...')
-    logPassDf = logDf[logDf['test_result'] == 'PASS']
+    logPassDf = logDf[(logDf['test_result'] == 'PASS') | (logDf['test_result'] == 'Pass')]
     logFatpDf = (logPassDf.join(fatpDf, logPassDf.serial_number == fatpDf.mlb_sn, 'inner')
                           .select('serial_number', 'items', 'version', 'line', 'machine', 'slot', 'hour').cache())
 

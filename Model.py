@@ -100,6 +100,7 @@ def sampling_modeling(matrix, colInfo, classifier='SVM', parallel=False, **sampl
 
     if sampling['samplingRatio'] not in [round(x,2) for x in np.arange(0.01, 1.01, 0.01)]:
         print 'please specify sampling ratio within list: {}'.format(np.linspace(0.01, 1, 100))
+        print 'something wrong!!'
         sys.exit()
     # the X matrix
     else:
