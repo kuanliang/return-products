@@ -39,7 +39,7 @@ def learn_logistic(X, y, colInfo):
         ])
 
     param_grid = {
-        'clf__penalty': ('l1', 'l2'),
+        'clf__penalty': ('l1'),
         'clf__tol': (1, 1e-1, 1e-2, 1e-3, 1e-4),
         'clf__C': (10, 5, 1, 0.1, 0.01, 0.001, 0.0001)
     }
@@ -95,7 +95,7 @@ def learn_SVM(X, y, colInfo):
 
 
 
-def sampling_modeling(matrix, colInfo, classifier='SVM', parallel=False, **sampling):
+def sampling_modeling(matrix, colInfo, classifier='SVM', parallel=False, iterative=False, **sampling):
 
 
     if sampling['samplingRatio'] not in [round(x,2) for x in np.arange(0.01, 1.01, 0.01)]:
@@ -114,7 +114,12 @@ def sampling_modeling(matrix, colInfo, classifier='SVM', parallel=False, **sampl
         matrixPass = matrix[matrix['y'] == 0]
         # matrixPassSample = matrixPass.sample(False, 0.01, 42)
         # rather than use dataframe sampling funciton, use the random integer gererated in matrix dataframe
-        matrixPassSample = matrixPass[matrixPass['randInt'].isin(randIntList)]
+
+
+        if iterative == False:
+            matrixPassSample = matrixPass[matrixPass['randInt'].isin(randIntList)]
+        else:
+            matrixPassSample = matrixPass[matrixPass['randInt'] == samplingRatio]
         # unionAll dataframes
         matrixSample = matrixReturn.unionAll(matrixPassSample)
         matrixGet = matrixSample
@@ -137,6 +142,36 @@ def sampling_modeling(matrix, colInfo, classifier='SVM', parallel=False, **sampl
     return model, report_test, report_train
 
 
+def iterative_modeling(matrix, colInfo, classifier='logistic', parallel=False, **sampling):
+
+
+    samplingRatio = sampling['samplingRatio']
+
+    matrixReturn = matrix[matrix['y'] == 1]
+    matrixPass = matrix[matrix['y'] == 0]
+    # matrixPassSample = matrixPass.sample(False, 0.01, 42)
+    # rather than use dataframe sampling funciton, use the random integer gererated in matrix dataframe
+    matrixPassSample = matrixPass[matrixPass['randInt'] == ]
+    # unionAll dataframes
+    matrixSample = matrixReturn.unionAll(matrixPassSample)
+    matrixGet = matrixSample
+
+    if parallel==False:
+        # scikit-learn
+        y = get_y(matrixGet)
+        pdf = pd.DataFrame(matrixSample.map(lambda x: x.items).collect())
+
+        if classifier == 'logistic':
+            model, report_test, report_train = learn_logistic(X=pdf, y=y, colInfo=colInfo)
+        elif classifier == 'SVM':
+            model, report_test, report_train = learn_SVM(X=pdf, y=y, colInfo=colInfo)
+    else:
+        # sparkML
+        model, report_test, report_train = parallel_learn_logistic(matrixGet, colInfo=colInfo)
+
+
+
+    return model, report_test, report_train
 
 
 
