@@ -109,6 +109,7 @@ def sampling_modeling(matrix, colInfo, classifier='SVM', parallel=False, iterati
         # according to the specified sampling ratio, generate a list of random numbers that will be
         # used to filter training data later
         randIntList = range(1, int(samplingRatio * 100) + 1)
+        randInt = int(samplingRatio * 100)
 
         matrixReturn = matrix[matrix['y'] == 1]
         matrixPass = matrix[matrix['y'] == 0]
@@ -119,7 +120,7 @@ def sampling_modeling(matrix, colInfo, classifier='SVM', parallel=False, iterati
         if iterative == False:
             matrixPassSample = matrixPass[matrixPass['randInt'].isin(randIntList)]
         else:
-            matrixPassSample = matrixPass[matrixPass['randInt'] == samplingRatio]
+            matrixPassSample = matrixPass[matrixPass['randInt'] = randInt]
         # unionAll dataframes
         matrixSample = matrixReturn.unionAll(matrixPassSample)
         matrixGet = matrixSample
