@@ -35,11 +35,11 @@ def learn_logistic(X, y, colInfo):
             ('impute', Imputer(missing_values = 'NaN', strategy = 'median', axis = 1)),
             ('scaler', RobustScaler()),
             #('clf', linear_model.SGDClassifier(loss = 'log', penalty='l1', class_weight='balanced', n_iter=1))
-            ('clf', linear_model.LogisticRegression(class_weight='balanced'))
+            ('clf', linear_model.LogisticRegression(penalty='l1', class_weight='balanced'))
         ])
 
     param_grid = {
-        'clf__penalty': ('l1'),
+        #'clf__penalty': ('l1'),
         'clf__tol': (1, 1e-1, 1e-2, 1e-3, 1e-4),
         'clf__C': (10, 5, 1, 0.1, 0.01, 0.001, 0.0001)
     }
@@ -136,38 +136,6 @@ def sampling_modeling(matrix, colInfo, classifier='SVM', parallel=False, iterati
         else:
             # sparkML
             model, report_test, report_train = parallel_learn_logistic(matrixGet, colInfo=colInfo)
-
-
-
-    return model, report_test, report_train
-
-
-def iterative_modeling(matrix, colInfo, classifier='logistic', parallel=False, **sampling):
-
-
-    samplingRatio = sampling['samplingRatio']
-
-    matrixReturn = matrix[matrix['y'] == 1]
-    matrixPass = matrix[matrix['y'] == 0]
-    # matrixPassSample = matrixPass.sample(False, 0.01, 42)
-    # rather than use dataframe sampling funciton, use the random integer gererated in matrix dataframe
-    matrixPassSample = matrixPass[matrixPass['randInt'] == ]
-    # unionAll dataframes
-    matrixSample = matrixReturn.unionAll(matrixPassSample)
-    matrixGet = matrixSample
-
-    if parallel==False:
-        # scikit-learn
-        y = get_y(matrixGet)
-        pdf = pd.DataFrame(matrixSample.map(lambda x: x.items).collect())
-
-        if classifier == 'logistic':
-            model, report_test, report_train = learn_logistic(X=pdf, y=y, colInfo=colInfo)
-        elif classifier == 'SVM':
-            model, report_test, report_train = learn_SVM(X=pdf, y=y, colInfo=colInfo)
-    else:
-        # sparkML
-        model, report_test, report_train = parallel_learn_logistic(matrixGet, colInfo=colInfo)
 
 
 
