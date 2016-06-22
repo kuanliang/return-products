@@ -145,7 +145,7 @@ def create_matrix(date, hiveContext, sparkContext, model='N71', station='FCT'):
 
 
 
-def randomPdf(matrix, randInt):
+def random_pdf(matrix, randInt):
 
 
     matrixPass = matrix[matrix['y'] == 0]
@@ -153,9 +153,12 @@ def randomPdf(matrix, randInt):
     matrixPassSample = matrixPass[matrixPass['randInt'] == randInt]
     matrixSample = matrixReturn.unionAll(matrixPassSample)
 
+    y = get_y(matrixSample)
+
     pdf = pd.DataFrame(matrixSample.map(lambda x: x.items).collect())
 
-    return pdf
+
+    return pdf, y
 
 
 

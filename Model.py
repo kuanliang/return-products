@@ -120,7 +120,7 @@ def sampling_modeling(matrix, colInfo, classifier='SVM', parallel=False, iterati
         if iterative == False:
             matrixPassSample = matrixPass[matrixPass['randInt'].isin(randIntList)]
         else:
-            matrixPassSample = matrixPass[matrixPass['randInt'] = randInt]
+            matrixPassSample = matrixPass[matrixPass['randInt'] == randInt]
         # unionAll dataframes
         matrixSample = matrixReturn.unionAll(matrixPassSample)
         matrixGet = matrixSample
