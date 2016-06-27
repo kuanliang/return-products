@@ -6,10 +6,10 @@ from pyspark.ml.tuning import CrossValidator, ParamGridBuilder
 from pyspark.sql import Row, SQLContext
 
 
-def filter_col():
+def filter_col(matrix, colInfo, inputCol, outputCol):
     '''
     '''
-
+    matrix['outputCol'] = matrix['inputCol'].map()
 
 
 
