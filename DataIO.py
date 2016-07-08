@@ -5,12 +5,13 @@ import datetime
 from pyspark.sql import SQLContext
 
 
-def load_specific_X(startDate, hiveContext, model='N71', station='FCT'):
+def load_specific_X(startDate, hiveContext, model='N71', station='FCT', timeSpan=1):
 
     start_date = startDate
     end_date = date.today().strftime('%Y-%m-%d')
     start_time_log = start_date + '_00'
-    end_time_log = start_date + '_23'
+    end_time_log = (datetime.datetime.strptime(start_date, '%Y-%m-%d') + datetime.timedelta(days=timeSpan))\
+                    .strftime('%Y-%m-%d') + '_23'
     parameters = {
         'model': model,
         'station': station,
@@ -29,6 +30,9 @@ def load_specific_X(startDate, hiveContext, model='N71', station='FCT'):
     # global hc
     hiveContext.sql('use cpk')
     logDf = hiveContext.sql(sqlLog)
+
+
+
     fatpDf = hiveContext.sql(sqlFatp)
 
     # DF.distinct() will not be worked on map columns

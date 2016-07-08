@@ -129,10 +129,23 @@ def get_y(matrix, **target):
 
 
 
-def create_matrix(date, hiveContext, sparkContext, model='N71', station='FCT'):
+def create_matrix(date, hiveContext, sparkContext, model='N71', station='FCT', timeSpan=1):
+    '''create matrix according to specified model and test station
 
+    Notes: the dates is a python list
+
+    Args:
+        dates: a list containing a dates
+        hiveContext:
+        sparkContext:
+
+    Returns:
+
+        a spark DataFrame
+
+    '''
     # load logDf, fatpDf
-    logDf, fatpDf = load_specific_X(date, hiveContext, model=model, station=station)
+    logDf, fatpDf = load_specific_X(dates, hiveContext, model=model, station=station, timeSpan=timeSpan)
     # laod y
     rpcDf = load_y(sc=sparkContext)
     # combine X
