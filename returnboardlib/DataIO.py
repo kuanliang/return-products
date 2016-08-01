@@ -6,6 +6,23 @@ from pyspark.sql import SQLContext
 
 
 def load_specific_X(startDate, hiveContext, model='N71', station='FCT', timeSpan=1):
+    '''load specific X according to specified model, station
+
+    Notes:
+
+    Args:
+        startDate (string): yyyy-mm-dd
+
+        hiveContext (context):
+
+        model (string):
+
+        station (string):
+
+    Return:
+
+
+    '''
 
     start_date = startDate
     end_date = date.today().strftime('%Y-%m-%d')
