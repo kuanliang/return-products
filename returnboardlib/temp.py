@@ -3,7 +3,8 @@ import numpy as np
 
 def get_y(matrix, **target):
     """Get y for building model
-    Notes:  Default value on code and location are none, if not specified, y of all return board will be set to 1
+    Notes:  Default value on code and location are none, if not specified,
+    y of all return board will be set to 1
 
     Argus:
         matrix:The complete DataFrame created from create_matrix()

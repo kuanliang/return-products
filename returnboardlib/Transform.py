@@ -145,7 +145,7 @@ def create_matrix(date, hiveContext, sparkContext, model='N71', station='FCT', t
 
     '''
     # load logDf, fatpDf
-    logDf, fatpDf = load_specific_X(dates, hiveContext, model=model, station=station, timeSpan=timeSpan)
+    logDf, fatpDf = load_specific_X(date, hiveContext, model=model, station=station, timeSpan=timeSpan)
     # laod y
     rpcDf = load_y(sc=sparkContext)
     # combine X

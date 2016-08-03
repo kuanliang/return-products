@@ -5,22 +5,30 @@ import datetime
 from pyspark.sql import SQLContext
 
 
-def load_specific_X(startDate, hiveContext, model='N71', station='FCT', timeSpan=1):
+def load_specific_X(startDate, hiveContext, model='N71', station='FCT', timeSpan=0):
     '''load specific X according to specified model, station
 
     Notes:
 
     Args:
         startDate (string): yyyy-mm-dd
-
+            e.g. '2016-08-01'
         hiveContext (context):
 
         model (string):
+            e.g. 'N71', 'N66', ...
 
         station (string):
+            e.g. 'FCT', 'SOC-TEST', ...
+
+        timeSpan (int): the time span period from the specified startDate
+
 
     Return:
 
+        logDf (Spark DataFrame): the logDf
+
+        fatpDf (Spark DataFrame):
 
     '''
 
@@ -28,7 +36,7 @@ def load_specific_X(startDate, hiveContext, model='N71', station='FCT', timeSpan
     end_date = date.today().strftime('%Y-%m-%d')
     start_time_log = start_date + '_00'
     end_time_log = (datetime.datetime.strptime(start_date, '%Y-%m-%d') + datetime.timedelta(days=timeSpan))\
-                    .strftime('%Y-%m-%d') + '_23'
+                    .strftime('%Y-%m-%d') + '_17'
     parameters = {
         'model': model,
         'station': station,
@@ -62,6 +70,15 @@ def load_specific_X(startDate, hiveContext, model='N71', station='FCT', timeSpan
 
 
 def load_y(sc):
+    '''load specific y (rpc data) from sql server
+
+    Notes: the rpc data is deposited at
+
+    Args:
+
+    Return:
+
+    '''
     sqlContext = SQLContext(sc)
     rpcDf = sqlContext.read.format('jdbc').options(url='jdbc:sqlserver://10.206.49.41;datebase=rpc;user=sa;\
     password=1qaz2wsx3edc4rfv%TGB', dbtable='[rpc].[dbo].[rpc_day_andy]').load()
