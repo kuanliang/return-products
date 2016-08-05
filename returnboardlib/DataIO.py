@@ -6,9 +6,9 @@ from pyspark.sql import SQLContext
 
 
 def load_specific_X(startDate, hiveContext, model='N71', station='FCT', timeSpan=0):
-    '''load specific X according to specified model, station
+    '''load specific X according to specified model, station and timespan period. 
 
-    Notes:
+    Notes: if timeSpan set to 1, than there will be 2 day test log being loaded
 
     Args:
         startDate (string): yyyy-mm-dd
@@ -26,17 +26,17 @@ def load_specific_X(startDate, hiveContext, model='N71', station='FCT', timeSpan
 
     Return:
 
-        logDf (Spark DataFrame): the logDf
+        logDf (Spark DataFrame): logDf
 
-        fatpDf (Spark DataFrame):
+        fatpDf (Spark DataFrame): fatpDf 
 
     '''
-
+    # 
     start_date = startDate
     end_date = date.today().strftime('%Y-%m-%d')
     start_time_log = start_date + '_00'
     end_time_log = (datetime.datetime.strptime(start_date, '%Y-%m-%d') + datetime.timedelta(days=timeSpan))\
-                    .strftime('%Y-%m-%d') + '_17'
+                    .strftime('%Y-%m-%d') + '_23'
     parameters = {
         'model': model,
         'station': station,

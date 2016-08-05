@@ -32,7 +32,7 @@ def analyze_column(sc, X):
     # 2. Sampling fro this X matrix
     # 3. trasform the X matrix to dictionary
     # 4.
-    sampleX = (X.sample(withReplacement=False, fraction=0.01, seed=42)
+    sampleX = (X.sample(withReplacement=False, fraction=0.005, seed=42)
                 .map(lambda x: x.items))
 
     df = pd.DataFrame(sampleX.collect())

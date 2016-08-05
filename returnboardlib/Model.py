@@ -96,7 +96,26 @@ def learn_SVM(X, y, colInfo):
 
 
 def sampling_modeling(matrix, colInfo, classifier, parallel=False, iterative=False, **sampling):
-
+    '''sampling modeling according to specified arguments
+    
+    Notes:
+    
+    Args:
+        matrix: 
+        
+        colInfo:
+        
+        classifier:
+        
+        parallel:
+        
+        iterative:
+        
+        
+    
+    Return:
+    
+    '''
 
     if sampling['samplingRatio'] not in [round(x,2) for x in np.arange(0.01, 1.01, 0.01)]:
         print 'please specify sampling ratio within list: {}'.format(np.linspace(0.01, 1, 100))
@@ -115,7 +134,6 @@ def sampling_modeling(matrix, colInfo, classifier, parallel=False, iterative=Fal
         matrixPass = matrix[matrix['y'] == 0]
         # matrixPassSample = matrixPass.sample(False, 0.01, 42)
         # rather than use dataframe sampling funciton, use the random integer gererated in matrix dataframe
-
 
         if iterative == False:
             matrixPassSample = matrixPass[matrixPass['randInt'].isin(randIntList)]

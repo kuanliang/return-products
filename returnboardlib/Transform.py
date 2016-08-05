@@ -11,7 +11,9 @@ def create_X(logDf, fatpDf):
 
     Notes:
 
-    Args: None
+    Args:
+        logDf:
+        fatpDf:
 
     Returns:   A test item DataFrame ['serial_number','items']
 
@@ -129,7 +131,7 @@ def get_y(matrix, **target):
 
 
 
-def create_matrix(date, hiveContext, sparkContext, model='N71', station='FCT', timeSpan=1):
+def create_matrix(date, hiveContext, sparkContext, model='N71', station='FCT'):
     '''create matrix according to specified model and test station
 
     Notes: the dates is a python list
@@ -145,7 +147,7 @@ def create_matrix(date, hiveContext, sparkContext, model='N71', station='FCT', t
 
     '''
     # load logDf, fatpDf
-    logDf, fatpDf = load_specific_X(date, hiveContext, model=model, station=station, timeSpan=timeSpan)
+    logDf, fatpDf = load_specific_X(date, hiveContext, model=model, station=station)
     # laod y
     rpcDf = load_y(sc=sparkContext)
     # combine X
