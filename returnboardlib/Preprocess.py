@@ -33,9 +33,15 @@ def analyze_column(sc, X):
     # 3. trasform the X matrix to dictionary
     # 4.
     print 'sampling from matrix'
+    if X.is_cached:
+        print 'the matrix is cached'
+    else:
+        print 'the matrix is somehow not cached, WTF!!!'
+        
     sampleX = (X.sample(withReplacement=False, fraction=0.005, seed=42)
                 .map(lambda x: x.items))
-
+    
+    
     df = pd.DataFrame(sampleX.collect())
     # df = df.toPandas()
     print 'sampling done'

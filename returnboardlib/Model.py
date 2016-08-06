@@ -110,13 +110,22 @@ def sampling_modeling(matrix, colInfo, classifier, parallel=False, iterative=Fal
         parallel:
         
         iterative:
+            True: used for ensemble modeling, pass record was choosed according to 
+            False: return record 
         
         
     
     Return:
     
     '''
-
+    
+    # check whether the matrix has been cached
+    if matrix.is_cached:
+        print 'Great!! the matrix is cached!!'
+    else:
+        print 'WTF, the matrix is somehow not cached!!!'
+    
+    
     if sampling['samplingRatio'] not in [round(x,2) for x in np.arange(0.01, 1.01, 0.01)]:
         print 'please specify sampling ratio within list: {}'.format(np.linspace(0.01, 1, 100))
         print 'something wrong!!'
@@ -134,7 +143,7 @@ def sampling_modeling(matrix, colInfo, classifier, parallel=False, iterative=Fal
         matrixPass = matrix[matrix['y'] == 0]
         # matrixPassSample = matrixPass.sample(False, 0.01, 42)
         # rather than use dataframe sampling funciton, use the random integer gererated in matrix dataframe
-
+        
         if iterative == False:
             matrixPassSample = matrixPass[matrixPass['randInt'].isin(randIntList)]
         else:
