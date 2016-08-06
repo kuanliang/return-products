@@ -12,8 +12,8 @@ def create_X(logDf, fatpDf):
     Notes:
 
     Args:
-        logDf:
-        fatpDf:
+        logDf: the logDf 
+        fatpDf: 
 
     Returns:   A test item DataFrame ['serial_number','items']
 
@@ -23,15 +23,15 @@ def create_X(logDf, fatpDf):
     # logging.info('Creating the matrix X...')
     logPassDf = logDf[(logDf['test_result'] == 'PASS') | (logDf['test_result'] == 'Pass')]
     logFatpDf = (logPassDf.join(fatpDf, logPassDf.serial_number == fatpDf.mlb_sn, 'inner')
-                          .select('serial_number', 'items', 'version', 'line', 'machine', 'slot', 'hour').cache())
+                          .select('serial_number', 'items', 'version', 'line', 'machine', 'slot', 'hour'))
 
-    ###
+    ### unique SNs being moved
     logFatpDfDist = logFatpDf.dropDuplicates(['serial_number'])
 
 
     items = logFatpDfDist.select('serial_number', 'items')
-    meta = logFatpDfDist.select('serial_number','version', 'line', 'machine', 'slot', 'hour')
-    #count = logFatpDfDist.count()
+    # meta = logFatpDfDist.select('serial_number','version', 'line', 'machine', 'slot', 'hour')
+    # count = logFatpDfDist.count()
 
     return items
 
@@ -61,14 +61,16 @@ def combine_matrix(X, y, top = 4):
     # matrixAll.cache()
     ### Drop row that has null values
     matrixAllDropNa = matrixAll.dropna(how = 'any')
-    symptomPdf = matrixAllDropNa[['check_in_code']].toPandas()
-    locationPdf = matrixAllDropNa[['fail_location']].toPandas()
+    
+    # matrixAllDropNa.cache()
+    symptomLocationPdf = matrixAllDropNa[['check_in_code', 'fail_location']].toPandas()
+    # locationPdf = matrixAllDropNa[['fail_location']].toPandas()
     #return symptomPdf
     #return matrixAllDropNa, matrixAll
 
-    codeSeries = symptomPdf['check_in_code'].value_counts()
+    codeSeries = symptomLocationPdf['check_in_code'].value_counts()
     #print codeSeries
-    locationSeries = locationPdf['fail_location'].value_counts()
+    locationSeries = symptomLocationPdf['fail_location'].value_counts()
     ### Top N = 5 symptoms
     codeDict = {}
     locationDict = {}
@@ -103,6 +105,7 @@ def combine_matrix(X, y, top = 4):
 def get_y(matrix, **target):
     """Get y for building model
     Notes:  Default value on code and location are none, if not specified, y of all return board will be set to 1
+            before calling this function, make sure that the matrix has been cached.
 
     Argus:
         matrix:The complete DataFrame created from create_matrix()
@@ -154,6 +157,9 @@ def create_matrix(date, hiveContext, sparkContext, model='N71', station='FCT'):
     X = create_X(logDf, fatpDf)
     # create matrix
     matrix = combine_matrix(X, rpcDf)
+    
+    # cache the matrix
+    matrix.cache()
 
     return matrix
 
