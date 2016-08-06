@@ -65,7 +65,7 @@ def combine_matrix(X, y, top = 4):
     # matrixAllDropNa.cache()
     print 'to pandas()'
     symptomLocationPdf = matrixAllDropNa[['check_in_code', 'fail_location']].toPandas()
-    print 'complete toPandas()
+    print 'complete toPandas()'
     # locationPdf = matrixAllDropNa[['fail_location']].toPandas()
     #return symptomPdf
     #return matrixAllDropNa, matrixAll
