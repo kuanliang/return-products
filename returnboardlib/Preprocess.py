@@ -32,11 +32,13 @@ def analyze_column(sc, X):
     # 2. Sampling fro this X matrix
     # 3. trasform the X matrix to dictionary
     # 4.
+    print 'sampling from matrix'
     sampleX = (X.sample(withReplacement=False, fraction=0.005, seed=42)
                 .map(lambda x: x.items))
 
     df = pd.DataFrame(sampleX.collect())
     # df = df.toPandas()
+    print 'sampling done'
     preprocess['all'] = list(df.columns)
     ori_num = len(df.columns)
     dfNu = df.apply(pd.to_numeric, errors='coerce')

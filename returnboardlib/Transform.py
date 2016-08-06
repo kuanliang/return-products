@@ -150,12 +150,16 @@ def create_matrix(date, hiveContext, sparkContext, model='N71', station='FCT'):
 
     '''
     # load logDf, fatpDf
+    print 'loading logDf, fatpDf'
     logDf, fatpDf = load_specific_X(date, hiveContext, model=model, station=station)
     # laod y
+    print 'loading fatpDF'
     rpcDf = load_y(sc=sparkContext)
     # combine X
+    print 'create X Df'
     X = create_X(logDf, fatpDf)
     # create matrix
+    print 'create matrix'
     matrix = combine_matrix(X, rpcDf)
     
     # cache the matrix
