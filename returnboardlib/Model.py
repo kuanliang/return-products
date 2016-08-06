@@ -150,11 +150,13 @@ def sampling_modeling(matrix, colInfo, classifier, parallel=False, iterative=Fal
             matrixPassSample = matrixPass[matrixPass['randInt'] == randInt]
         # unionAll dataframes
         matrixSample = matrixReturn.unionAll(matrixPassSample)
-        matrixGet = matrixSample
+        matrixSample.cache()
 
         if parallel==False:
             # scikit-learn
-            y = get_y(matrixGet)
+            print 'get_y process'
+            y = get_y(matrixSample)
+            print 'panda dataframe process'
             pdf = pd.DataFrame(matrixSample.map(lambda x: x.items).collect())
 
             if classifier == 'logistic':
@@ -165,7 +167,8 @@ def sampling_modeling(matrix, colInfo, classifier, parallel=False, iterative=Fal
             # sparkML
             model, report_test, report_train = parallel_learn_logistic(matrixGet, colInfo=colInfo)
 
-
+        # release the cache
+        matrixSample.unpersist()
 
     return model, report_test, report_train
 
