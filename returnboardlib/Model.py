@@ -99,7 +99,7 @@ def learn_SVM(X, y, colInfo):
 
 
 
-def sampling_modeling(matrix, colInfo, classifier, parallel=False, iterative=False, matrixReturn=matrixReturn, **sampling):
+def sampling_modeling(matrix, colInfo, classifier, matrixReturn, matrixPass, parallel=False, iterative=False, **sampling):
     '''sampling modeling according to specified arguments
     
     Notes: mkae sure the matrixReturn dataframe is cached
@@ -172,11 +172,17 @@ def sampling_modeling(matrix, colInfo, classifier, parallel=False, iterative=Fal
 
         if parallel==False:
             # scikit-learn
-            print 'get_y process'
-            y = get_y(matrixSample)
-            print 'panda dataframe process'
-            pdf = pd.DataFrame(matrixSample.map(lambda x: x.items).collect())
+            # print 'get_y process'
+            # y = get_y(matrixSample)
+            print 'transform the spark dataframe to the pandas dataframe...'
+            matrixSamplePdf = matrixSample.toPandas()
+            print 'generate items pdf for modeling'
+            pdf = pd.DataFrame(list(matrixSamplePdf['items'].values))
+            print 'generate y for modeling'
+            y = matrixSamplePdf['y']
+            # pdf = pd.DataFrame(matrixSample.map(lambda x: x.items).collect())
 
+            
             if classifier == 'logistic':
                 model, predictProb, report_test, report_train = learn_logistic(X=pdf, y=y, colInfo=colInfo)
             elif classifier == 'SVM':
