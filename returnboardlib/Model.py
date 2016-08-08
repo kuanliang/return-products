@@ -46,13 +46,17 @@ def learn_logistic(X, y, colInfo):
     X_train, X_test, y_train, y_test = cross_validation.train_test_split(X, y, test_size = 0.3, random_state=0)
     gs_cv = grid_search.GridSearchCV(pipe, param_grid, scoring='precision')
     gs_cv.fit(X_train, y_train)
+    # predict result
     predict_test = gs_cv.predict(X_test)
     predict_train = gs_cv.predict(X_train)
+    # predict probability
+    predict_test_prob = gs_cv.predict_proba(X_test)
+    predict_train_prob = gs_cv.predict_proba(X_train)
     prediction_report_test = classification_report(y_test, predict_test)
     prediction_report_train = classification_report(y_train, predict_train)
     # self.predicion_report_test = prediction_report_test
     # self.prediction_report_train = prediction_report_train
-    return gs_cv, prediction_report_test, prediction_report_train
+    return gs_cv, (predict_test, predict_train), prediction_report_test, prediction_report_train
 
 
 def learn_SVM(X, y, colInfo):
@@ -95,10 +99,10 @@ def learn_SVM(X, y, colInfo):
 
 
 
-def sampling_modeling(matrix, colInfo, classifier, parallel=False, iterative=False, **sampling):
+def sampling_modeling(matrix, colInfo, classifier, parallel=False, iterative=False, matrixReturn=matrixReturn, **sampling):
     '''sampling modeling according to specified arguments
     
-    Notes:
+    Notes: mkae sure the matrixReturn dataframe is cached
     
     Args:
         matrix: 
@@ -139,7 +143,7 @@ def sampling_modeling(matrix, colInfo, classifier, parallel=False, iterative=Fal
         randIntList = range(1, int(samplingRatio * 100) + 1)
         randInt = int(samplingRatio * 100)
 
-        matrixReturn = matrix[matrix['y'] == 1]
+        # matrixReturn = matrix[matrix['y'] == 1]
         matrixPass = matrix[matrix['y'] == 0]
         # matrixPassSample = matrixPass.sample(False, 0.01, 42)
         # rather than use dataframe sampling funciton, use the random integer gererated in matrix dataframe
@@ -149,8 +153,11 @@ def sampling_modeling(matrix, colInfo, classifier, parallel=False, iterative=Fal
         else:
             matrixPassSample = matrixPass[matrixPass['randInt'] == randInt]
         # unionAll dataframes
+        # cache the dataframe first
+        matrixPassSample.cache()
         matrixSample = matrixReturn.unionAll(matrixPassSample)
         matrixSample.cache()
+        
 
         if parallel==False:
             # scikit-learn
@@ -160,7 +167,7 @@ def sampling_modeling(matrix, colInfo, classifier, parallel=False, iterative=Fal
             pdf = pd.DataFrame(matrixSample.map(lambda x: x.items).collect())
 
             if classifier == 'logistic':
-                model, report_test, report_train = learn_logistic(X=pdf, y=y, colInfo=colInfo)
+                model, predictProb, report_test, report_train = learn_logistic(X=pdf, y=y, colInfo=colInfo)
             elif classifier == 'SVM':
                 model, report_test, report_train = learn_SVM(X=pdf, y=y, colInfo=colInfo)
         else:
@@ -168,9 +175,10 @@ def sampling_modeling(matrix, colInfo, classifier, parallel=False, iterative=Fal
             model, report_test, report_train = parallel_learn_logistic(matrixGet, colInfo=colInfo)
 
         # release the cache
+        matrixPassSample.unpersist()
         matrixSample.unpersist()
 
-    return model, report_test, report_train
+    return model, predictProb, report_test, report_train
 
 
 
