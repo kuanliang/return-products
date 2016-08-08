@@ -129,6 +129,17 @@ def sampling_modeling(matrix, colInfo, classifier, parallel=False, iterative=Fal
     else:
         print 'WTF, the matrix is somehow not cached!!!'
     
+    if matrixPass.is_cached:
+        print 'Excellent!! the matrixPass is also cached!!'
+    else:
+        print 'WTF, the matrixPass is WTF not cached!!!'
+    
+    if matrixReturn.is_cached:
+        print 'Awesome!!! the matrixReturn is cached wonderfully!!!'
+    else:
+        print 'Shoooot!!! the matrixReturn is not cached!!!!!'
+    
+    
     
     if sampling['samplingRatio'] not in [round(x,2) for x in np.arange(0.01, 1.01, 0.01)]:
         print 'please specify sampling ratio within list: {}'.format(np.linspace(0.01, 1, 100))
@@ -144,7 +155,7 @@ def sampling_modeling(matrix, colInfo, classifier, parallel=False, iterative=Fal
         randInt = int(samplingRatio * 100)
 
         # matrixReturn = matrix[matrix['y'] == 1]
-        matrixPass = matrix[matrix['y'] == 0]
+        # matrixPass = matrix[matrix['y'] == 0]
         # matrixPassSample = matrixPass.sample(False, 0.01, 42)
         # rather than use dataframe sampling funciton, use the random integer gererated in matrix dataframe
         
