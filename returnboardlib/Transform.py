@@ -185,24 +185,42 @@ def create_matrix(date, hiveContext, sparkContext, model='N71', station='FCT'):
 
 
 def random_pdf(matrix, randIntList, returnboard=True):
+    '''random select dataframe according spcified randInt
+    
+    Notes:
+    
+    Argus:
+        matrix (spark DataFrame):
+        
+        randIntList (list):
+        
+        reutnrboard (boolean)
+        
+        
+    Return:
+        
+        pdf (pandas DataFrame):
+        
+        y (np array): 
+
     '''
-
-
-    '''
-
-    matrixPass = matrix[matrix['y'] == 0]
-    matrixReturn = matrix[matrix['y'] == 1]
-    matrixPassSample = matrixPass[matrixPass['randInt'].isin(randIntList)]
-    if returnboard == True:
-        matrixSample = matrixReturn.unionAll(matrixPassSample)
+    # make sure that the matrix is cached
+    if matrix.is_cache:
+        'Great! the matrix is cached'
     else:
-        matrixSample = matrixPassSample
-
-    y = get_y(matrixSample)
-
-    pdf = pd.DataFrame(matrixSample.map(lambda x: x.items).collect())
-
-
+        'Shoooot!! the matrix is not cached!!!'
+        matrix.cache()
+    
+    # matrixPass = matrix[matrix['y'] == 0]
+    # matrixReturn = matrix[matrix['y'] == 1]
+    matrixSample = matrix[matrix['randInt'].isin(randIntList)]
+    
+    print 'transform the spark dataframe to the pandas dataframe...'
+    matrixSamplePdf = matrixSample.toPandas()
+    print 'generate items pdf for modeling'
+    pdf = pd.DataFrame(list(matrixSamplePdf['items'].values))
+    print 'generate y for modeling'
+    y = matrixSamplePdf['y']
 
     return pdf, y
 
